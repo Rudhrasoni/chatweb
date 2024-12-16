@@ -1,0 +1,109 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link href="css/css.css" media="screen" rel="stylesheet" />
+    <style>
+      .chat-container {
+        width: 100%;
+        max-width: 400px;
+        height: 600px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        height: 40vh;
+        width: 300px;
+        overflow: scroll;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #dcdce9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="chat-container">
+      <div class="chat-container">
+        <div id="data2"></div>
+      </div>
+      <input type="text" id="data" />
+      <button type="button" id="btn">Send</button>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script>
+      read();
+      var currentdate = new Date();
+      var datetime =
+        currentdate.getDate() +
+        "/" +
+        (currentdate.getMonth() + 1) +
+        "/" +
+        currentdate.getFullYear() +
+        " " +
+        currentdate.getHours() +
+        ":" +
+        currentdate.getMinutes() +
+        ":" +
+        currentdate.getSeconds();
+
+      function ss(event) {
+        // event.preventDefault();
+        let input = $("#data").val();
+        let user = 1;
+        let time = datetime;
+        let data = user + "$" + input + "$" + time;
+        if (data == "" || data == null) {
+          return;
+        }
+
+        $.ajax({
+          url: "http://localhost:3000/write",
+          type: "POST",
+          data: JSON.stringify({ data: data }),
+          contentType: "application/json",
+          success: (response) => {
+            read();
+          },
+          error: (xhr, status, error) => {
+            console.log("Error:", status, error);
+          },
+        });
+      }
+      document.querySelector("#btn").addEventListener("click", ss);
+      function read() {
+        $.ajax({
+          url: "http://localhost:3000/read",
+          type: "GET",
+          success: (response) => {
+            if (response == "") {
+              $("#data2").html("File is empty");
+            } else {
+              $("#data2").css("color", "black");
+              $("#data2").html("");
+              $("#data").val("");
+              let showdata = response.fileData.split(", ");
+              showdata.forEach((element) => {
+                let mess = element.split("$");
+                if (mess != "") {
+                  $("#data2").append(`<p>${mess[1]}</p>`);
+                }
+              });
+            }
+          },
+          error: (xhr, status, error) => {
+            console.log("Error:", status, error);
+          },
+        });
+      }
+    </script>
+  </body>
+</html> -->
