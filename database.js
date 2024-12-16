@@ -1,52 +1,60 @@
-const mysql = require('mysql2/promise');
-const { getConnection } = require('./connection');
+// insertMessageAndAssign.js
+
+const { getConnection } = require('./databaseConnection');
+
 /**
- * Inserts a message into the messages table and assigns it to users using message_assagin table.
- * 
- * @param {string} message - The message to be inserted.
- * @param {number} fromUserId - The user sending the message.
- * @param {number} toUserId - The user receiving the message.
- * @returns {Promise<void>}
+ * Function to parse and convert a single input string into structured data.
+ * @param {string} input - The raw input string (e.g., '1|^|someone%40domain.com%5Cr%5CnBCC%3Aadmin%40domain.com|^|14/12/2024 20:07:30')
+ * @returns {Object} - The parsed data with userId, email, and timestamp.
  */
-async function insertMessageAndAssign(message, fromUserId, toUserId) {
-    // Database connection configuration
+function parseInput(input) {
+    const delimiter = '|^|';
+    const [userId, encodedContent, timestamp] = input.split(delimiter);
+    const content = decodeURIComponent(encodedContent);
+    return {
+        userId: parseInt(userId, 10),
+        content,
+        timestamp: timestamp.trim() 
+    };
+}
+
+/**
+ * Inserts a message into the `messages` table and assigns it in the `message_assagin` table.
+ * @param {string} input - The input string to be parsed and inserted.
+ * @returns {Promise<void>} - Resolves when the operation is complete.
+ */
+async function insertMessageAndAssign(input) {
+    const chats = input.split(',').map(chat => chat.trim()).filter(Boolean); 
     
-
-    let connection;
     try {
-        // Create a MySQL connection
-        connection = await mysql.createConnection(getConnection);
-        
-        // Start a transaction
-        await connection.beginTransaction();
+        const connection = await getConnection();
 
-        // Step 1: Insert message into the `messages` table
-        const messageSql = 'INSERT INTO messages (message, status) VALUES (?, ?)';
-        const [messageResult] = await connection.execute(messageSql, [message, 1]); // 1 for "active" status
-        const messageId = messageResult.insertId; // Get the last inserted message ID
+        for (const chat of chats) {
+            try {
+                const { userId, content, timestamp } = parseInput(chat);
+                
+                // Insert message into 'messages' table
+                const [messageResult] = await connection.execute(
+                    'INSERT INTO messages (message, status) VALUES (?, ?)',
+                    [content, 1] 
+                );
 
-        console.log(`Message inserted successfully with ID: ${messageId}`);
+                const messageId = messageResult.insertId; 
 
-        // Step 2: Assign the message to users using `message_assagin` table
-        const assignSql = 'INSERT INTO message_assagin (from_user_id, to_user_id, message_id) VALUES (?, ?, ?)';
-        const [assignResult] = await connection.execute(assignSql, [fromUserId, toUserId, messageId]);
+                await connection.execute(
+                    'INSERT INTO message_assagin (from_user_id, to_user_id, message_id) VALUES (?, ?, ?)',
+                    [userId, userId, messageId] // Assuming `from_user_id` and `to_user_id` are the same here
+                );
 
-        console.log('Message assigned successfully:', assignResult);
-
-        // Commit the transaction
-        await connection.commit();
+                console.log(`Successfully inserted message: "${content}" with message ID: ${messageId}`);
+            } catch (error) {
+                console.error(`Error processing chat: "${chat}"`, error);
+            }
+        }
 
     } catch (error) {
-        // Rollback if there is any error
-        if (connection) {
-            await connection.rollback();
-        }
-        console.error('Error occurred:', error);
-    } finally {
-        // Close the connection
-        if (connection) {
-            await connection.end();
-        }
+        console.error('Error connecting to the database:', error);
+        throw error;
     }
 }
 
