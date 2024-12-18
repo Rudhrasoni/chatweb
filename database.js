@@ -1,6 +1,6 @@
 // insertMessageAndAssign.js
 
-const { getConnection } = require('./databaseConnection');
+const { getConnection } = require('./connection');
 
 /**
  * Function to parse and convert a single input string into structured data.
