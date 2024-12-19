@@ -8,6 +8,10 @@ app.use(cors());
 
 app.use(express.json());
 
+app.get("/webchat", (req, res) => {
+  const userid = req.query.userid;
+})
+
 app.post("/write", (req, res) => {
   const data = req.body.data;
 
