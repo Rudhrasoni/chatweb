@@ -1,10 +1,15 @@
-(() => {
   const socket = io("http://localhost:3002");
   socket.on("connect", () => {
     console.log("Connected to server");
   });
-  const user = prompt("Who are you");
-  const touser = 2;
+  const user = "Rishi";
+  const urlParams = new URLSearchParams(window.location.search);
+  const touser = urlParams.get('userid');
+  console.log(touser);
+  if(touser == "" || touser == null){
+    alert("User is required");
+    window.location.href = "/list.html";
+  }
   const apiUrl = "http://localhost:3001";
   const delimiter = "|^|"; // Unique delimiter
 
@@ -30,40 +35,37 @@
   }
 
   // Send data to the API
-  function sendData(input) {
+  function sendData(input, userid) {
     if (!input) return;
     const encodedInput = encodeURIComponent(input);
     const time = getCurrentDateTime();
-    const data = `${user}${delimiter}${encodedInput}${delimiter}${time}`;
+    const data = `${userid}${delimiter}${encodedInput}${delimiter}${time}`;
+    if(userid == user){
+      socket.emit("send-message", input);
+    }
 
     $.ajax({
       url: `${apiUrl}/write`,
       type: "POST",
       data: JSON.stringify({ data }),
       contentType: "application/json",
-      success: () => console.log("Message sent successfully"),
+      success: () => {
+        console.log("Message sent successfully");
+      },
       error: (xhr, status, error) => console.error("Error:", status, error),
     });
   }
   function recesivedata(input) {
     if (!input) return;
-    const encodedInput = encodeURIComponent(input);
     const time = getCurrentDateTime();
-    const data = `${touser}${delimiter}${encodedInput}${delimiter}${time}`;
-
-    $.ajax({
-      url: `${apiUrl}/write`,
-      type: "POST",
-      data: JSON.stringify({ data }),
-      contentType: "application/json",
-      success: () => console.log("Message sent successfully"),
-      error: (xhr, status, error) => console.error("Error:", status, error),
-    });
+    addMessage(input, "received", time);
   }
-    socket.on('message', data => {
-      recesivedata();
-      read();
-  })
+  socket.on("message", (data) => {
+    if(data.user == user){
+      sendData(data.message, touser);
+    }
+    recesivedata(data.message);
+  });
 
   // Parse the message data returned by the server
   function parseMessageData(response) {
@@ -83,18 +85,25 @@
         const formattedTime = time
           ? convertTo12HourFormat(time)
           : "Unknown time";
-        const messageType = sender === String(user) ? "sent" : "received";
-
-        addMessage(message, messageType, formattedTime);
+        const messageType = sender === String(user) ? "sent" : sender === String(touser) ? "received" : "else";
+        if(messageType !== "else"){
+          addMessage(message, messageType, formattedTime);
+        }
       }
     });
   }
 
   // Read the messages from the server
-  function read() {
+  function read(userid) {
     $.ajax({
       url: `${apiUrl}/read`,
       type: "GET",
+      beforeSend: () => {
+        $('#chat-messages').html('')
+      },
+      data : {
+        user : userid
+      },
       success: parseMessageData,
       error: (xhr, status, error) => console.error("Error:", status, error),
     });
@@ -148,13 +157,7 @@
   sendButton.addEventListener("click", () => {
     const messageText = messageInput.value.trim();
     if (messageText) {
-      sendData(messageText);
-      // let sendobj = {
-      //   message : messageText,
-      //   user : user
-      // }
-      socket.emit("send-message", messageText);
-      read();
+      sendData(messageText, user);
       addMessage(
         messageText,
         "sent",
@@ -175,4 +178,3 @@
 
   // Initial read when the page loads
   read();
-})();

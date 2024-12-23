@@ -111,6 +111,8 @@
     <script>
         const contacts = [
             { id: 1001, name: 'John Doe' },
+            { id: "Rudhra", name: 'Rudhra' },
+            { id: "Rahul", name: 'Rahul' },
             { id: 1002, name: 'Jane Smith' },
             { id: 1003, name: 'Michael Johnson' },
             { id: 1004, name: 'Emily Davis' },
@@ -146,7 +148,7 @@
 
             // Chat button
             const chatButton = document.createElement('a');
-            chatButton.href = `/webchat?userid=${contact.id}`;
+            chatButton.href = `/?userid=${contact.id}`;
             chatButton.classList.add('chat-button');
             chatButton.textContent = 'Chat';
 
