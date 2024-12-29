@@ -110,60 +110,6 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 
-    <script src="js/list.js"></script>
-
-    <!-- <script> 
-        const contacts = [
-            { id: 101, name: 'Me' },
-            { id: 1001, name: 'John Doe' },
-            { id: 102, name: 'Rudhra' },
-            { id: 103, name: 'Rahul' },
-            { id: 1002, name: 'Jane Smith' },
-            { id: 1003, name: 'Michael Johnson' },
-            { id: 1004, name: 'Emily Davis' },
-            { id: 1005, name: 'Chris Brown' }
-        ];
-
-        const contactsList = document.getElementById('contacts-list');
-
-        // Load contacts dynamically
-        contacts.forEach(contact => {
-            const listItem = document.createElement('li');
-            listItem.classList.add('contact-item');
-
-            // Avatar
-            const avatar = document.createElement('div');
-            avatar.classList.add('contact-avatar');
-            avatar.textContent = contact.name.charAt(0).toUpperCase();
-
-            // Contact details
-            const details = document.createElement('div');
-            details.classList.add('contact-details');
-
-            const name = document.createElement('div');
-            name.classList.add('contact-name');
-            name.textContent = contact.name;
-
-            const userId = document.createElement('div');
-            userId.classList.add('contact-id');
-            userId.textContent = `User ID: ${contact.id}`;
-
-            details.appendChild(name);
-            details.appendChild(userId);
-
-            // Chat button
-            const chatButton = document.createElement('a');
-            chatButton.href = `/?userid=${contact.id}`;
-            chatButton.classList.add('chat-button');
-            chatButton.textContent = 'Chat';
-
-            listItem.appendChild(avatar);
-            listItem.appendChild(details);
-            listItem.appendChild(chatButton);
-
-            contactsList.appendChild(listItem);
-        });
-    </script> -->
-
+    <script src="../js/list.js"></script>
 </body>
 </html>

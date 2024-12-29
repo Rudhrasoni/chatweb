@@ -1,66 +1,56 @@
 const express = require("express");
-const fs = require("fs");
 const cors = require("cors");
+const path = require("path");
 const app = express();
-const { insertMessageAndAssign } = require("./database");
+const chatRoutes = require("./routes/messages")
+const userRoutes = require("./routes/user")
+const { logRequests } = require("./middlewares")
+
+app.use('/js', express.static(path.join(__dirname, 'js')));
 
 app.use(cors());
 
 app.use(express.json());
+app.use(logRequests('./logs/logs.txt'))
 
-app.get("/webchat", (req, res) => {
-  const userid = req.query.userid;
+app.set("view engine", "ejs");
+app.set("views", path.resolve("./view"));
+app.use("/message", chatRoutes);
+app.use("/user", userRoutes);
+app.get('/friends', (req, res) => {
+  return res.render('list');
 })
-
-app.post("/write", (req, res) => {
-  const data = req.body.data;
-
-  if (!data) {
-    return res.status(400).json({ message: "No data provided!" });
-  }
-  // insertMessageAndAssign(data);
-  const updatedData = "\n" + data + ", ";
-
-  fs.appendFile("./data/files.txt", updatedData, (err) => {
-    if (err) {
-      return res
-        .status(500)
-        .json({ message: "Failed to write to file", error: err });
-    }
-    fs.readFile("./data/files.txt", "utf8", (err, data) => {
-      if (err) {
-        return res
-          .status(500)
-          .json({ message: "Failed to read file", error: err });
-      }
-      res.json({ fileData: data });
-    });
-  });
-});
-
-app.get("/read", (req, res) => {
-  fs.readFile("./data/files.txt", "utf8", (err, data) => {
-    if (err) {
-      return res
-        .status(500)
-        .json({ message: "Failed to read file", error: err });
-    }
-    res.json({ fileData: data });
-  });
-});
-
-app.get("/", (req, res) => {
-  fs.readFile("./data/files.txt", "utf8", (err, data) => {
-    if (err) {
-      return res
-        .status(500)
-        .json({ message: "Failed to read file", error: err });
-    }
-    res.json({ fileData: data });
-  });
-});
-
+app.get('/chat', (req, res) => {
+  return res.render('chats');
+})
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
+
+////////////////////////////////////////////////////
+
+
+
+const io = require("socket.io")(3002, {
+  cors: {
+    origin: '*', // Allow requests from your frontend
+    methods: ["GET", "POST"],
+  },
+});
+
+
+const users = {}    //create a users object
+
+io.on('connection', socket => {
+  socket.on('new-user', user => {     //when new-user is emited
+      users[socket.id] = user         //create a key value pair based on socket.id
+      socket.broadcast.emit('user-joined', user)  //send the message to everyone that this user joined
+  })
+  socket.on('send-message', message => {  
+      socket.broadcast.emit('message', { message: message, user: users[socket.id] })  
+      //instead of just sending message, we now send an object with a message key
+      // and a user pulled out of our users object
+  })
+})
