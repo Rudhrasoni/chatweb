@@ -23,6 +23,10 @@ app.get('/friends', (req, res) => {
 app.get('/chat', (req, res) => {
   return res.render('chats');
 })
+app.get('/login', (req, res) => {
+  return res.render('login');
+})
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
