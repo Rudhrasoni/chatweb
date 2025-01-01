@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Group Chat</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f5f5f5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .chat-container {
+        width: 90%;
+        max-width: 500px;
+        min-height: 500px;
+
+        background-color: #fff;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      header {
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px;
+        text-align: center;
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      #chat-box {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+        border-bottom: 1px solid #ddd;
+      }
+
+      #chat-box .message {
+        margin-bottom: 15px;
+      }
+
+      #chat-box .message .user {
+        font-weight: bold;
+        margin-right: 5px;
+      }
+
+      #chat-box .message .time {
+        font-size: 0.8em;
+        color: #777;
+        margin-left: 5px;
+      }
+
+      #chat-box .join-notice {
+        font-size: 0.9em;
+        color: #007bff;
+        text-align: center;
+        margin-bottom: 10px;
+      }
+
+      #message-form {
+        display: flex;
+        padding: 10px;
+        background-color: #f9f9f9;
+      }
+
+      #message-input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+      }
+
+      #message-form button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px 15px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-left: 10px;
+        border-radius: 4px;
+      }
+
+      #message-form button:hover {
+        background-color: #0056b3;
+      }
+    </style>
+    <script defer src="http://localhost:3002/socket.io/socket.io.js"></script>
+    <script src="https://cdn.socket.io/4.7.1/socket.io.min.js"></script> 
+
+    <script defer src="../js/groupchat.js"></script>
+  </head>
+  <body>
+    <div class="chat-container">
+      <header>
+        <span><a href="/friends"><i class="fa-solid fa-arrow-left"></i></a></span>
+        <h2>Group</h2>
+        <span> </span>
+      </header>
+      <div id="chat-box">
+        <!-- Messages will appear here -->
+      </div>
+      <form id="message-form">
+        <input
+          type="text"
+          id="message-input"
+          placeholder="Type a message..."
+          autocomplete="off"
+          required
+        />
+        <button type="submit">Send</button>
+      </form>
+    </div>
+  </body>
+</html>
