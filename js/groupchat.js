@@ -1,65 +1,11 @@
-// const socket = io("http://localhost:3002");
-
-
-// // Get DOM elements
-// const chatBox = document.getElementById('chat-box');
-// const messageForm = document.getElementById('message-form');
-// const messageInput = document.getElementById('message-input');
-
-// // Prompt for username and send to server
-// const username = "Rishi";
-// socket.emit('new-user', username);
-
-// // Display message when a user joins
-// socket.on('user-joined', user => {
-//     const notice = document.createElement('div');
-//     notice.classList.add('join-notice');
-//     notice.textContent = `${user} joined the chat`;
-//     chatBox.appendChild(notice);
-//     chatBox.scrollTop = chatBox.scrollHeight;
-// });
-
-// // Display received messages
-// socket.on('message', data => {
-//     const messageElement = document.createElement('div');
-//     messageElement.classList.add('message');
-//     messageElement.innerHTML = `
-//         <span class="user">${data.user}:</span>
-//         <span>${data.message}</span>
-//         <span class="time">${new Date().toLocaleTimeString()}</span>
-//     `;
-//     chatBox.appendChild(messageElement);
-//     chatBox.scrollTop = chatBox.scrollHeight;
-// });
-
-// // Send message
-// messageForm.addEventListener('submit', e => {
-//     e.preventDefault();
-//     const message = messageInput.value;
-//     if (message.trim() === '') return;
-    
-//     // Display your own message in the chat box
-//     const messageElement = document.createElement('div');
-//     messageElement.classList.add('message');
-//     messageElement.innerHTML = `
-//         <span class="user">You:</span>
-//         <span>${message}</span>
-//         <span class="time">${new Date().toLocaleTimeString()}</span>
-//     `;
-//     chatBox.appendChild(messageElement);
-//     chatBox.scrollTop = chatBox.scrollHeight;
-
-//     // Send message to server
-//     socket.emit('send-message', message);
-//     messageInput.value = '';
-// });
-
 const socket = io("http://192.168.47.220:3002");
 
 // Prompt the user to enter their name and join the chat
 const userName = prompt("Enter your name to join the group chat:");
 if (userName) {
   socket.emit("new-user", userName); // Notify the server of the new user
+} else {
+  return;
 }
 
 // Listen for new users joining

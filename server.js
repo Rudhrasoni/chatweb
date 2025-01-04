@@ -6,9 +6,12 @@ const chatRoutes = require("./routes/messages")
 const userRoutes = require("./routes/user")
 const { logRequests } = require("./middlewares")
 
+
+
 app.use('/js', express.static(path.join(__dirname, 'js')));
 
 app.use(cors());
+app.use(express.urlencoded({ extended: true }));
 
 app.use(express.json());
 app.use(logRequests('./logs/logs.txt'))
@@ -24,7 +27,16 @@ app.get('/chat', (req, res) => {
   return res.render('chats');
 })
 app.get('/login', (req, res) => {
-  return res.render('login');
+  return res.render('login', {
+    page : 1,
+    registered : 3
+  });
+})
+app.get('/register', (req, res) => {
+  return res.render('login', {
+    page : 2,
+    registered : 3
+  });
 })
 app.get('/world', (req, res) => {
   return res.render('group');

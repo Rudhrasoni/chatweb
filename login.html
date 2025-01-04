@@ -76,6 +76,26 @@
         margin-top: 15px;
         font-size: 0.9rem;
       }
+      .validation-message {
+        font-size: 0.9rem;
+        padding: 10px;
+        margin-bottom: 10px;
+        text-align: center;
+        border-radius: 5px;
+        /* display: none; Hidden by default */
+      }
+
+      .validation-message.success {
+        color: #2ecc71; /* Green for success */
+        background-color: #ecf9f1;
+        border: 1px solid #02f367;
+      }
+
+      .validation-message.error {
+        color: #e74c3c; /* Red for errors */
+        background-color: #fbeaea;
+        border: 1px solid #e74c3c;
+      }
 
       .auth-toggle a {
         color: #3498db;
@@ -87,6 +107,17 @@
   <body>
     <div class="auth-container" id="login-form">
       <div class="auth-header">Login</div>
+      <div id="login-validation-message" class="validation-message success">
+        <strong>User Added Success Fully</strong>
+      </div>
+      <div id="login-validation-message" class="validation-message error">
+        <strong>Somthing Went Wrong, Please Try again later</strong>
+      </div>
+      <div id="login-validation-message" class="validation-message error">
+        <strong>User Already Exist, Use Different Email</strong>
+      </div>
+
+
       <form class="auth-form">
         <input type="text" id="login-userid" placeholder="User ID" required />
         <input
