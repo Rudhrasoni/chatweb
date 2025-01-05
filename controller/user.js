@@ -1,8 +1,8 @@
-const { getUserData, addUserIn, checkUserbyemail } = require("../models/user");
-const { v4 : uuidv4 } = require('uuid');
+const { getUserData, addUserIn, loginUser } = require("../models/user");
 const path = require('path');
 const loginViewPath = path.join(__dirname, '../view/login');
 const listViewPath = path.join(__dirname, '../view/list');
+const { setUser } = require('../service/auth')
 
 async function allFriends(req, res) {
   const userid = req.body.data;
@@ -57,34 +57,28 @@ async function registerUser(userdata, res) {
   }
 }
 
-async function checkUser(userdata, res) {
-
+async function checkUser(req, res) {
+  const userdata = req.body;
   if (!userdata) {
     return res.status(400).json({ message: "User data is not defined" });
   }
 
   try {
-    const isuser = await checkUserbyemail(userdata);
-
+    const isuser = await loginUser(userdata);
     if (isuser.success) {
+      const token = setUser(isuser.data[0]);
+      res.cookie('uid', token);
+      const user = req.user
+      return res.render(listViewPath, {
+        user
+      });
+    } else {
       return res.render(loginViewPath, {
         page : 1,
-        registered : 1
-      } );
-    } else if (isuser.errorCode == 2) {
-      return res.render(loginViewPath, {
-        page : 2,
-        registered : 2,
+        registered : 5,
         message :  isuser.message
       } );
-    } else if (isuser.errorCode == 3) {
-      return res.render(loginViewPath, {
-        page : 2,
-        registered : 0,
-        already : 0,
-        message :  "Something went wrong, Please try agin later"
-      } );
-    }
+    } 
   } catch (error) {
     console.error("Error adding user:", error);
     return res.status(500).json({ message: "Internal server error" });

@@ -106,15 +106,72 @@
       <ul>
         <li class="contact-item">
           <div class="contact-avatar">W</div>
-          <div class="contact-details"><div class="contact-name">World Chat</div></div>
+          <div class="contact-details">
+            <div class="contact-name">World Chat</div>
+          </div>
           <a href="/world" class="chat-button">Chat</a>
         </li>
       </ul>
-      <ul class="contacts-list" id="contacts-list">
-        
-      </ul>
+      <ul class="contacts-list" id="contacts-list"></ul>
     </div>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="../js/list.js"></script>
+    <script>
+      
+      const user_id = "<%= user.id %>";
+
+      const apiUrl = "http://localhost:3001";
+      const contactsList = document.getElementById("contacts-list");
+
+      const contacts = getFriends(user_id)
+        .then((contacts) => {
+          contacts.forEach((contact) => {
+            if (document.querySelector(`[data-id='${contact.unique_id}']`)) {
+              console.log(
+                `Duplicate entry for ID: ${contact.unique_id}, skipping.`
+              );
+              return; // Skip duplicate
+            }
+            // console.log(contact);
+            const listItem = document.createElement("li");
+            listItem.classList.add("contact-item");
+
+            // Avatar
+            const avatar = document.createElement("div");
+            avatar.classList.add("contact-avatar");
+            avatar.textContent = contact.name.charAt(0).toUpperCase();
+
+            // Contact details
+            const details = document.createElement("div");
+            details.classList.add("contact-details");
+
+            const name = document.createElement("div");
+            name.classList.add("contact-name");
+            name.textContent = contact.name;
+
+            // const userId = document.createElement("div");
+            // userId.classList.add("contact-id");
+            // userId.textContent = `User ID: ${contact.unique_id}`;
+
+            details.appendChild(name);
+            // details.appendChild(userId);
+
+            // Chat button
+            const chatButton = document.createElement("a");
+            chatButton.href = `/chat?userid=${contact.unique_id}`;
+            chatButton.classList.add("chat-button");
+            chatButton.textContent = "Chat";
+
+            listItem.appendChild(avatar);
+            listItem.appendChild(details);
+            listItem.appendChild(chatButton);
+
+            contactsList.appendChild(listItem);
+          });
+        })
+        .catch((err) => {
+          console.error("Error fetching contacts:", err);
+        });
+    </script>
   </body>
 </html>

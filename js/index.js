@@ -1,18 +1,10 @@
+if (!user) {
+  window.location.href = "/user/logout";
+}
 const socket = io("http://localhost:3002");
 socket.on("connect", () => {
-  // console.log("Connected to server");
+  console.log("Connected to server");
 });
-const user = "101";
-const urlParams = new URLSearchParams(window.location.search);
-const touser = urlParams.get("userid");
-
-if (touser == "" || touser == null) {
-  alert("User is required");
-  window.location.href = "/friends";
-}
-const apiUrl = "http://localhost:3001";
-const delimiter = "|^|"; 
-
 const padZero = (num) => String(num).padStart(2, "0");
 
 function getCurrentDateTime() {
@@ -42,7 +34,7 @@ function sendData(input, userdata) {
   const data = `${userdata}${delimiter}${encodedInput}${delimiter}${time}`;
   const sender = userdata.split("~");
   if (sender[0] == user) {
-    socket.emit("send-message", input);
+    socket.emit("send-message", input, touser);
   }
 
   $.ajax({
@@ -60,15 +52,15 @@ function recesivedata(input, userid) {
   if (!input) return;
   const time = getCurrentDateTime();
   const formattedTime = time ? convertTo12HourFormat(time) : "Unknown time";
-  if (userid == touser) {
-    addMessage(input, "received", formattedTime);
-  }
+  console.log("Sender", userid, 'Open Chat', touser )
+  if (userid == user) addMessage(input, "received", formattedTime);
 }
 socket.on("message", (data) => {
-  if (data.user == user) {
-    sendData(data.message, data.user + "~" + user);
+  if (data.sender != user) {
+    sendData(data.message, data.sender + "~" + user);
   }
-  recesivedata(data.message, data.user);
+  console.log(data.message, data.sender);
+  recesivedata(data.message, data.sender);
 });
 
 

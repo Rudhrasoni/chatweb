@@ -4,7 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chatting Website</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
 
     <style>
       * {
@@ -44,7 +47,6 @@
         font-weight: bold;
         display: flex;
         justify-content: space-between;
-
       }
 
       .chat-messages {
@@ -128,12 +130,15 @@
         text-decoration: none; /* Optional: Prevent underline */
       }
 
-      /* Optionally add styles for specific states, if needed */
       a:hover,
       a:focus,
       a:active {
-        color: inherit; /* Ensure color stays the same */
-        text-decoration: none; /* Optional: Prevent underline on hover */
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .sidebar-menu::-webkit-scrollbar {
+        width: 0px;
       }
     </style>
   </head>
@@ -142,25 +147,15 @@
       <!-- Chat Header -->
 
       <div class="chat-header">
-        <span><a href="/friends"><i class="fa-solid fa-arrow-left"></i></a></span>
+        <span
+          ><a href="/"><i class="fa-solid fa-arrow-left"></i></a
+        ></span>
         <span>Live Chat</span>
         <span> </span>
-
       </div>
 
       <!-- Chat Messages -->
-      <div class="chat-messages" id="chat-messages">
-        <div class="message received">
-          <div class="content">Hello! How can I assist you today?</div>
-          <div class="time">09:45 AM</div>
-        </div>
-        <div class="message sent">
-          <div class="content">
-            <a href="#" target="_blank" rel="noopener noreferrer">https://text</a>
-            <div class="time">09:47 AM</div>
-          </div>
-        </div>
-      </div>
+      <div class="sidebar-menu chat-messages" id="chat-messages"></div>
 
       <!-- Chat Footer -->
       <div class="chat-footer">
@@ -168,10 +163,19 @@
         <button id="send-button">Send</button>
       </div>
     </div>
-    <script defer src="http://localhost:3002/socket.io/socket.io.js"></script>
-    <script src="https://cdn.socket.io/4.7.1/socket.io.min.js"></script> 
+    <script src="https://cdn.socket.io/4.7.1/socket.io.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 
+    <script>
+      const user = "<%= user.unique_id %>";
+      const urlParams = new URLSearchParams(window.location.search);
+      const touser = urlParams.get("userid");
+      if (touser == "" || touser == null) {
+        window.location.href = "/";
+      }
+      const apiUrl = "http://localhost:3001";
+      const delimiter = "|^|";
+    </script>
     <script src="js/index.js"></script>
   </body>
 </html>

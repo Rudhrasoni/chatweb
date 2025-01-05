@@ -112,12 +112,23 @@
       <div id="login-validation-message" class="validation-message success">
         <strong>User Added Success Fully</strong>
       </div>
+      <% } else if(registered == 5){ %>
+      <div id="login-validation-message" class="validation-message error">
+        <strong>Email or Password is Incorrect</strong>
+      </div>
       <% } %>
-      <form class="auth-form">
-        <input type="text" id="login-userid" placeholder="User ID" required />
+      <form class="auth-form" action="/user/login" method="post">
+        <input
+          type="text"
+          id="login-email"
+          name="email"
+          placeholder="Email"
+          required
+        />
         <input
           type="password"
           id="login-password"
+          name="password"
           placeholder="Password"
           required
         />
@@ -174,6 +185,17 @@
     </div>
     <% } %>
 
+    <script>
+      removeError();
+      function removeError() {
+        const validation = document.querySelector(".validation-message");
+        if (validation) {
+          setTimeout(() => {
+            validation.style.display = "none"; 
+          }, 3000);
+        }
+      }
+    </script>
     <!-- <script>
       const loginForm = document.getElementById("login-form");
       const registerForm = document.getElementById("register-form");
