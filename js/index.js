@@ -18,14 +18,12 @@ function getCurrentDateTime() {
   return `${date} ${time}`;
 }
 
-
 function convertTo12HourFormat(time24) {
   const [hours, minutes] = time24.split(":");
   const period = hours >= 12 ? "PM" : "AM";
-  const hour12 = hours % 12 || 12; 
+  const hour12 = hours % 12 || 12;
   return `${padZero(hour12)}:${minutes} ${period}`;
 }
-
 
 function sendData(input, userdata) {
   if (!input) return;
@@ -42,9 +40,7 @@ function sendData(input, userdata) {
     type: "POST",
     data: JSON.stringify({ data }),
     contentType: "application/json",
-    success: () => {
-      
-    },
+    success: () => {},
     error: (xhr, status, error) => console.error("Error:", status, error),
   });
 }
@@ -52,17 +48,14 @@ function recesivedata(input, userid) {
   if (!input) return;
   const time = getCurrentDateTime();
   const formattedTime = time ? convertTo12HourFormat(time) : "Unknown time";
-  console.log("Sender", userid, 'Open Chat', touser )
   if (userid == user) addMessage(input, "received", formattedTime);
 }
 socket.on("message", (data) => {
   if (data.sender != user) {
     sendData(data.message, data.sender + "~" + user);
   }
-  console.log(data.message, data.sender);
   recesivedata(data.message, data.sender);
 });
-
 
 function parseMessageData(response) {
   if (!response) return;
@@ -97,7 +90,6 @@ function parseMessageData(response) {
   });
 }
 
-
 function read(userid) {
   $.ajax({
     url: `${apiUrl}/message/read`,
@@ -113,7 +105,6 @@ function read(userid) {
   });
 }
 
-
 function convertLinksToClickable(text) {
   const urlPattern = /((https?:\/\/|www\.)[^\s]+)/g;
   return text.replace(urlPattern, (url) => {
@@ -122,7 +113,6 @@ function convertLinksToClickable(text) {
   });
 }
 
-
 function addMessage(text, type, time) {
   const messageElement = document.createElement("div");
   messageElement.classList.add("message", type);
@@ -130,7 +120,6 @@ function addMessage(text, type, time) {
   const contentElement = document.createElement("div");
   contentElement.classList.add("content");
 
-  
   if (/https?:\/\/[^\s]+/.test(text)) {
     const link = document.createElement("a");
     link.href = text.startsWith("http") ? text : "https://" + text;
@@ -153,7 +142,6 @@ function addMessage(text, type, time) {
   chatMessages.appendChild(messageElement);
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
-
 
 const messageInput = document.getElementById("message-input");
 const sendButton = document.getElementById("send-button");
@@ -180,6 +168,5 @@ messageInput.addEventListener("keypress", (e) => {
     sendButton.click();
   }
 });
-
 
 read();
