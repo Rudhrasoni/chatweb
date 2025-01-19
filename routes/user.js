@@ -1,11 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const { allFriends, registerUser, checkUser  } = require('../controller/user');
+const { allFriends, registerUser, checkUser, profiledata, editUserdara  } = require('../controller/user');
 const { logoutUser  } = require('../service/auth');
 
 router.use(express.urlencoded({ extended: true }));
 
 router.post("/usersbyid", allFriends);
+router.get('/profile', profiledata)
+router.post('/profile', editUserdara)
 router.post("/register", async (req, res) => {
     const userdata = req.body;
     await registerUser(userdata, res)

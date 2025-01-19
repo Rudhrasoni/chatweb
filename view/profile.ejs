@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile Page</title>
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+  />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #e9eff3;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .profile-container {
+        width: 100%;
+        max-width: 450px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+      }
+
+      .profile-header {
+        background-color: #3498db;
+        color: #fff;
+        padding: 20px;
+        text-align: center;
+        font-size: 1.6rem;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+      }
+      .profile-pic {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        margin: 0 auto 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #3498db;
+        color: #fff;
+        font-size: 36px;
+        font-weight: bold;
+      }
+
+      .profile-details {
+        margin-bottom: 15px;
+      }
+
+      .profile-details label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .profile-details span,
+      .profile-details input {
+        font-size: 16px;
+        color: #333;
+        display: block;
+        margin-bottom: 10px;
+      }
+
+      .profile-details input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+        display: none;
+      }
+
+      .edit-icon {
+        float: right;
+        cursor: pointer;
+        color: #007bff;
+      }
+
+      .action-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+      }
+
+      .action-buttons button {
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .save-button {
+        background-color: #28a745;
+        color: #fff;
+      }
+
+      .cancel-button {
+        background-color: #dc3545;
+        color: #fff;
+      }
+      .box-body {
+        padding: 35px;
+        width: auto;
+      }
+      .validation-message {
+        font-size: 0.9rem;
+        padding: 10px;
+        margin-bottom: 10px;
+        text-align: center;
+        border-radius: 5px;
+        display: none;
+      }
+
+      .validation-message.error {
+        color: #e74c3c; /* Red for errors */
+        background-color: #fbeaea;
+        border: 1px solid #e74c3c;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="profile-container">
+      <div class="profile-header">
+        <span
+          ><a href="/" style="color: #fff;"><i class="fa-solid fa-arrow-left"></i></a
+        ></span>
+        <span>Profile</span>
+        <span></span>
+      </div>
+      <form
+        id="userdataedit"
+        class="box-body"
+        action="/user/profile"
+        method="post"
+      >
+        <div id="profile-pic" class="profile-pic"></div>
+        <div id="profile-validation-message" class="validation-message error">
+          <strong>No Changes Found</strong>
+        </div>
+        <div class="profile-details">
+          <label>
+            Name
+            <span class="edit-icon" onclick="editField('name')">✎</span>
+          </label>
+          <span id="name-display"> </span>
+          <input name="name-input" id="name-input" type="text" />
+        </div>
+        <div class="profile-details">
+          <label>
+            Email
+            <span class="edit-icon" onclick="editField('email')">✎</span>
+          </label>
+          <span id="email-display">123 Main Street</span>
+          <input name="email-input" id="email-input" type="text" />
+        </div>
+        <div class="profile-details">
+          <label>
+            Birthdate
+            <span class="edit-icon" onclick="editField('birthdate')">✎</span>
+          </label>
+          <span id="birthdate-display"></span>
+          <input name="birthdate-input" id="birthdate-input" type="date" />
+        </div>
+        <div class="action-buttons">
+          <button type="button" class="save-button" onclick="saveChanges()">
+            Save
+          </button>
+          <button type="button" class="cancel-button" onclick="cancelChanges()">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script>
+      const userProfile = {
+        name: "<%= name %>",
+        email: "<%= email %>",
+        birthdate: "<%= birthdate ? birthdate : 'Add Birth Date' %>",
+        picture: null,
+      };
+      console.log(userProfile);
+
+      function initializeProfile() {
+        const profilePic = document.getElementById("profile-pic");
+        if (userProfile.picture) {
+          profilePic.style.backgroundImage = `url(${userProfile.picture})`;
+          profilePic.style.backgroundSize = "cover";
+        } else {
+          profilePic.textContent = userProfile.name.charAt(0).toUpperCase();
+        }
+
+        document.getElementById("name-display").textContent = userProfile.name;
+        document.getElementById("email-display").textContent =
+          userProfile.email;
+        document.getElementById("birthdate-display").textContent =
+          userProfile.birthdate;
+      }
+
+      function editField(field) {
+        document.getElementById(`${field}-display`).style.display = "none";
+        const input = document.getElementById(`${field}-input`);
+        input.style.display = "block";
+        input.value = userProfile[field];
+      }
+
+      function saveChanges() {
+        let hasChanges = false;
+
+        ["name", "email", "birthdate"].forEach((field) => {
+          const input = document.getElementById(`${field}-input`);
+          const currentValue = input.value.trim();
+          if (currentValue != "") {
+            const originalValue = userProfile[field]
+              ? userProfile[field].trim()
+              : "";
+            if (currentValue !== originalValue) {
+              hasChanges = true;
+            }
+          }
+        });
+        if (hasChanges) {
+            $("#userdataedit").submit();
+        } else {
+          $("#profile-validation-message").css("display", "block");
+          setTimeout(() => {
+            $("#profile-validation-message").css("display", "none");
+          }, 3000);
+        }
+      }
+
+      function cancelChanges() {
+        ["name", "email", "birthdate"].forEach((field) => {
+          const input = document.getElementById(`${field}-input`);
+          input.style.display = "none";
+          document.getElementById(`${field}-display`).style.display = "block";
+        });
+      }
+
+      initializeProfile();
+    </script>
+  </body>
+</html>

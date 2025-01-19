@@ -4,11 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Contact List</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
     <style>
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
+        text-decoration: none;
+        list-style-type: none;
       }
 
       body {
@@ -28,6 +34,33 @@
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
         overflow: hidden;
       }
+      .menuboxclass {
+        width: 175px;
+        height: 67%;
+        position: absolute;
+        background-color: white;
+        box-shadow: 6px 5px 10px -5px black;
+        border-radius: 15px;
+        display: none;
+        padding: 18px;
+        font-size: 18px;
+        font-weight: 700;
+      }
+      .searchinput {
+        background-color: transparent;
+        border: none;
+        outline: none; /* Removes the outline that might appear on focus */
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      .searchinput:hover,
+      .searchinput:focus,
+      .searchinput:active {
+        border: none;
+        outline: none; /* Ensures no outline even on focus */
+        box-shadow: none; /* Removes any box-shadow applied during focus/active state */
+      }
 
       .contacts-header {
         background-color: #3498db;
@@ -36,6 +69,8 @@
         text-align: center;
         font-size: 1.6rem;
         font-weight: bold;
+        display: flex;
+        justify-content: space-between;
       }
 
       .contacts-list {
@@ -76,6 +111,22 @@
         font-weight: bold;
         color: #333;
       }
+      .search-container {
+        width: auto;
+        display: flex;
+        justify-content: right;
+      }
+
+      .search-box {
+        display: none;
+        width: 283px;
+        background: rgb(255, 255, 255);
+        height: 73px;
+        position: absolute;
+        border-radius: 34px;
+        box-shadow: 6px 5px 10px -5px black;
+        padding: 25px;
+      }
 
       .contact-id {
         font-size: 0.85rem;
@@ -98,11 +149,72 @@
       .chat-button:hover {
         background-color: #2980b9;
       }
+      .menu-list {
+        padding: 15px 6px;
+        font-size: medium;
+        line-height: 30px;
+        width: 130px;
+        line-height: 52px;
+        color: #1f5d86;
+      }
+      a {
+        color: inherit; /* Inherit color from the parent element */
+        text-decoration: none; /* Optional: Prevent underline */
+      }
+
+      a:hover,
+      a:focus,
+      a:active {
+        text-decoration: none;
+      }
     </style>
   </head>
   <body>
     <div class="contacts-container">
-      <div class="contacts-header">Contact List</div>
+      <div class="contacts-header">
+        <span id="menubox"><i class="fa fa-bars"></i></span>
+        <span>Contact List</span>
+        <span id="searchbox"><i class="fa fa-search"></i></span>
+      </div>
+      <div id="main-menu" class="menuboxclass">
+        Menu
+        <div class="menu-list">
+          <ul>
+            <li>
+              <i class="fa-solid fa-user"></i>
+              <a href="/user/profile">
+                <span> Your Profile</span>
+              </a>
+            </li>
+            <li>
+              <i class="fa-solid fa-address-book"></i>
+              <span> Add Friends </span>
+            </li>
+            <li>
+              <i class="fa-solid fa-gear"></i>
+              <span> Setting </span>
+            </li>
+            <li style="color: red">
+              <a href="/user/logout">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span> Logout</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="search-container">
+        <div class="search-box">
+          <input
+            name="searchinput"
+            id="searchinput"
+            placeholder="Search ... "
+            class="searchinput"
+          />
+        </div>
+      </div>
+
       <ul>
         <li class="contact-item">
           <div class="contact-avatar">W</div>
@@ -117,12 +229,9 @@
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="../js/list.js"></script>
     <script>
-      
       const user_id = "<%= user.id %>";
-
       const apiUrl = "http://localhost:3001";
       const contactsList = document.getElementById("contacts-list");
-
       const contacts = getFriends(user_id)
         .then((contacts) => {
           contacts.forEach((contact) => {
@@ -130,42 +239,26 @@
               console.log(
                 `Duplicate entry for ID: ${contact.unique_id}, skipping.`
               );
-              return; // Skip duplicate
+              return;
             }
-            // console.log(contact);
             const listItem = document.createElement("li");
             listItem.classList.add("contact-item");
-
-            // Avatar
             const avatar = document.createElement("div");
             avatar.classList.add("contact-avatar");
             avatar.textContent = contact.name.charAt(0).toUpperCase();
-
-            // Contact details
             const details = document.createElement("div");
             details.classList.add("contact-details");
-
             const name = document.createElement("div");
             name.classList.add("contact-name");
             name.textContent = contact.name;
-
-            // const userId = document.createElement("div");
-            // userId.classList.add("contact-id");
-            // userId.textContent = `User ID: ${contact.unique_id}`;
-
             details.appendChild(name);
-            // details.appendChild(userId);
-
-            // Chat button
             const chatButton = document.createElement("a");
             chatButton.href = `/chat?userid=${contact.unique_id}`;
             chatButton.classList.add("chat-button");
             chatButton.textContent = "Chat";
-
             listItem.appendChild(avatar);
             listItem.appendChild(details);
             listItem.appendChild(chatButton);
-
             contactsList.appendChild(listItem);
           });
         })

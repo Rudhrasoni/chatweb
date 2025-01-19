@@ -137,9 +137,6 @@
         text-decoration: none;
       }
 
-      .sidebar-menu::-webkit-scrollbar {
-        width: 0px;
-      }
     </style>
   </head>
   <body>
@@ -155,7 +152,7 @@
       </div>
 
       <!-- Chat Messages -->
-      <div class="sidebar-menu chat-messages" id="chat-messages"></div>
+      <div class="chat-messages" id="chat-messages"></div>
 
       <!-- Chat Footer -->
       <div class="chat-footer">
@@ -176,6 +173,7 @@
       const apiUrl = "http://localhost:3001";
       const delimiter = "|^|";
     </script>
-    <script src="js/index.js"></script>
+    <script src="js/chat.js"></script>
+    <script src="/js/index.js"></script>
   </body>
 </html>

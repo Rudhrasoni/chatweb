@@ -17,8 +17,18 @@ app.use(cors());
 app.use("/js", express.static(path.join(__dirname, "js")));
 
 app.use(logRequests("./logs/logs.txt"));
+app.get("/login",checkAuth, (req, res) => {
+  const user = req.user;
+  if(user) return res.redirect('/');
+  return res.render("login", {
+    page: 1,
+    registered: 3,
+  });
+});
 app.use("/user", checkAuth, userRoutes);
-app.use(checksession());
+
+app.use(checksession()); /// Need Access 
+
 app.use("/message", chatRoutes);
 app.get("/friends", (req, res) => {
   return res.render("list");
@@ -28,12 +38,7 @@ app.get("/chat", (req, res) => {
   if(!user) return res.redirect('/login');
     return res.render("chats", {user});
 });
-app.get("/login", (req, res) => {
-  return res.render("login", {
-    page: 1,
-    registered: 3,
-  });
-});
+
 app.get("/register", (req, res) => {
   return res.render("login", {
     page: 2,
@@ -41,7 +46,10 @@ app.get("/register", (req, res) => {
   });
 });
 app.get("/world", (req, res) => {
-  return res.render("group");
+  const user = req.user
+  return res.render("group", {
+    user
+  });
 });
 app.get("/", (req, res) => {
   const user = req.user;
@@ -79,9 +87,12 @@ io.on("connection", (socket) => {
     });
   });
   socket.on("send-group-message", (message) => {
-    const user = users[socket.id]; // Get the sender's username
+    const user = users[socket.id];
     if (user) {
-      socket.broadcast.emit("group-message", { message, user }); // Broadcast the message to everyone
+      socket.broadcast.emit("group-message", { 
+        message: message, 
+        user: user
+      }); 
     }
   });
   socket.on("disconnect", () => {

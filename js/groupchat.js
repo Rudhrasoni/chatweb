@@ -1,73 +1,86 @@
-const socket = io("http://192.168.47.220:3002");
-
-// Prompt the user to enter their name and join the chat
-const userName = prompt("Enter your name to join the group chat:");
-if (userName) {
-  socket.emit("new-user", userName); // Notify the server of the new user
-} else {
-  return;
-}
-
-// Listen for new users joining
-socket.on("user-joined", (user) => {
-  console.log(`${user} has joined the group chat.`);
-  addMessage(`${user} joined the chat`, "system");
+const socket = io("http://localhost:3002");
+socket.on("connect", () => {
+  socket.emit('new-user', username);
 });
 
-// Sending a group message
-function sendGroupMessage(message) {
-  if (message.trim()) {
-    socket.emit("send-group-message", message); // Emit the message to the server
-    addMessage(`You: ${message}`, "sent"); // Display the message in the UI
+socket.on('user-joined', user => {
+  if(user != name){
+    userNotify(`${user} has joined the chat!`)  
   }
-}
+})
 
-// Listening for incoming group messages
+function sendData(input, userdata) {
+  if (!input) return;
+  const encodedInput = encodeURIComponent(input);
+  const time = getCurrentDateTime();
+  const data = `${userdata}${delimiter}${encodedInput}${delimiter}${time}`;
+  const sender = userdata.split("~");
+  if (sender[0] == user) {
+    console.log(input, username)
+    socket.emit("send-group-message", input);
+  }
+
+  $.ajax({
+    url: `${apiUrl}/message/group`,
+    type: "POST",
+    data: JSON.stringify({ data }),
+    contentType: "application/json",
+    success: () => {},
+    error: (xhr, status, error) => console.error("Error:", status, error),
+  });
+}
+function recesivedata(input, userid) {
+  if (!input) return;
+  const time = getCurrentDateTime();
+  const formattedTime = time ? convertTo12HourFormat(time) : "Unknown time";
+  addMessage(input, "received", formattedTime);
+}
 socket.on("group-message", (data) => {
-  const { message, user } = data;
-  console.log(`${user}: ${message}`);
-  addMessage(`${user}: ${message}`, "received"); // Display received message
+  recesivedata(data.message, data.username);
 });
 
-// Handle user leaving
-socket.on("user-left", (user) => {
-  console.log(`${user} has left the group chat.`);
-  addMessage(`${user} left the chat`, "system"); // Notify others about the user leaving
-});
+function parseMessageData(response) {
+  if (!response) return;
+  const showData = response.fileData.split(", ");
+  showData.forEach((entry) => {
+    if (!entry) return;
 
-// Add a message to the chat UI
-function addMessage(text, type) {
-  const messageElement = document.createElement("div");
-  messageElement.classList.add("message");
-
-  if (type === "system") {
-    messageElement.classList.add("join-notice");
-  } else {
-    messageElement.classList.add(type);
-  }
-
-  messageElement.textContent = text;
-
-  const chatBox = document.getElementById("chat-box");
-  chatBox.appendChild(messageElement);
-  chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the latest message
+    const parts = entry.split(delimiter);
+    if (parts.length >= 3) {
+      const senderdata = parts[0].trim();
+      const message = decodeURIComponent(parts[1].trim()) || "No message";
+      const dateTime = parts[2].trim() || "Unknown date/time";
+      const [date, time] = dateTime.split(" ");
+      const formattedTime = time ? convertTo12HourFormat(time) : "Unknown time";
+        const sender = senderdata.split("~");
+        if(sender[1] == touser){
+          const messageType = sender[0] === String(user) ? "sent" : "received";
+          addMessage(message, messageType, formattedTime);
+        }
+    }
+  });
 }
 
-// Event listener for sending messages via the form
-const messageForm = document.getElementById("message-form");
-const messageInput = document.getElementById("message-input");
+function read(userid) {
+  $.ajax({
+    url: `${apiUrl}/message/group`,
+    type: "GET",
+    beforeSend: () => {
+      $("#chat-messages").html("");
+    },
+    data: {
+      user: userid,
+    },
+    success: parseMessageData,
+    error: (xhr, status, error) => console.error("Error:", status, error),
+  });
+}
 
-messageForm.addEventListener("submit", (event) => {
-  event.preventDefault(); // Prevent form submission
-  const message = messageInput.value;
-  sendGroupMessage(message); // Call the function to send a message
-  messageInput.value = ""; // Clear the input field
-});
+function userNotify(text) {
+  const textElement = document.createElement("span");
+  textElement.classList.add("join-notice");
+  textElement.textContent = text;
 
-// Handle "Enter" key for sending messages
-messageInput.addEventListener("keypress", (e) => {
-  if (e.key === "Enter" && !e.shiftKey) {
-    e.preventDefault(); // Prevent a new line
-    messageForm.dispatchEvent(new Event("submit")); // Trigger form submission
-  }
-});
+  const chatMessages = document.getElementById("chat-messages");
+  chatMessages.appendChild(textElement);
+}
