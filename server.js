@@ -7,6 +7,8 @@ const app = express();
 const { logRequests, checksession, checkAuth } = require("./middlewares");
 const userRoutes = require("./routes/user");
 const chatRoutes = require("./routes/messages");
+const chatbotRoutes = require("./routes/chatbot");
+
 
 app.set("view engine", "ejs");
 app.set("views", path.resolve("./view"));
@@ -25,11 +27,19 @@ app.get("/login",checkAuth, (req, res) => {
     registered: 3,
   });
 });
+
+app.get("/register", (req, res) => {
+  return res.render("login", {
+    page: 2,
+    registered: 3,
+  });
+});
 app.use("/user", checkAuth, userRoutes);
 
 app.use(checksession()); /// Need Access 
-
 app.use("/message", chatRoutes);
+app.use("/v3", chatbotRoutes);
+
 app.get("/friends", (req, res) => {
   return res.render("list");
 });
@@ -39,12 +49,6 @@ app.get("/chat", (req, res) => {
     return res.render("chats", {user});
 });
 
-app.get("/register", (req, res) => {
-  return res.render("login", {
-    page: 2,
-    registered: 3,
-  });
-});
 app.get("/world", (req, res) => {
   const user = req.user
   return res.render("group", {

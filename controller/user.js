@@ -92,7 +92,8 @@ async function profiledata(req, res) {
       _id : userdata.unique_id,
       name: userdata.name,
       email: userdata.email,
-      birthdate: userdata.birthdate
+      birthdate: userdata.birthdate,
+      number: userdata.number
   }
 
   return res.render(profilePath, profiledata);

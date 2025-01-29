@@ -10,7 +10,8 @@ function setUser(user) {
         unique_id: user.unique_id,
         name: user.name,
         email: user.email,
-        birthdate : user.birthdate
+        birthdate : user.birthdate,
+        number : user.number
       },
       secret,
       {

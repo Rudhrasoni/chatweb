@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .chat-container {
+            width: 400px;
+            margin: 50px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .chat-box {
+            max-height: 400px;
+            overflow-y: scroll;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            min-height: 450px;
+
+        }
+        .chat-box .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f1f1f1;
+        }
+        .chat-box .user-message {
+            background-color: #d1e7ff;
+            text-align: right;
+        }
+        .chat-box .bot-message {
+            background-color: #e2e2e2;
+        }
+        .input-area {
+            display: flex;
+            border-top: 1px solid #ddd;
+            padding: 15px;
+        }
+        .input-area input {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .input-area button {
+            width: 18%;
+            background-color: #007BFF;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .input-area button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="chat-container">
+        <div class="chat-box" id="chatBox">
+            <!-- Chat messages will be displayed here -->
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="userMessage" placeholder="Type your message..." />
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Send message function
+        function sendMessage() {
+            const userMessage = document.getElementById('userMessage').value.trim();
+
+            if (!userMessage) return;
+
+            // Display user's message
+            displayMessage(userMessage, 'user-message');
+
+            // Send AJAX request to the server
+            $.ajax({
+                url: '/v3/chatbot', 
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ message: userMessage }),
+                success: function(response) {
+                    // Display bot's response
+                    console.log(response)
+                    displayMessage(response.response, 'bot-message');
+                },
+                error: function(error) {
+                    console.error('Error:', error);
+                    displayMessage('Sorry, something went wrong. Please try again later.', 'bot-message');
+                }
+            });
+
+            // Clear input field
+            document.getElementById('userMessage').value = '';
+        }
+        displayMessage("How can i help you?", 'bot-message');
+
+        // Display message on screen
+        function displayMessage(message, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.classList.add(type);
+            messageDiv.innerText = message;
+
+            document.getElementById('chatBox').appendChild(messageDiv);
+
+            // Scroll to the bottom of the chat
+            document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
+        }
+    </script>
+
+</body>
+</html>

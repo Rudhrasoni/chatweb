@@ -158,15 +158,23 @@
             <span class="edit-icon" onclick="editField('name')">✎</span>
           </label>
           <span id="name-display"> </span>
-          <input name="name-input" id="name-input" type="text" />
+          <input name="name" id="name-input" value="<%= name %>" type="text" />
         </div>
         <div class="profile-details">
           <label>
             Email
-            <span class="edit-icon" onclick="editField('email')">✎</span>
+            <span class="edit-icon" on222click="editField('email')">✎</span>
           </label>
           <span id="email-display">123 Main Street</span>
-          <input name="email-input" id="email-input" type="text" />
+          <input name="email" id="email-input" value="<%= email %>" type="text" />
+        </div>
+        <div class="profile-details">
+          <label>
+            Number
+            <span class="edit-icon" onclick="editField('number')">✎</span>
+          </label>
+          <span id="number-display"></span>
+          <input name="number" id="number-input" value="<%= number %>" type="text" />
         </div>
         <div class="profile-details">
           <label>
@@ -174,7 +182,7 @@
             <span class="edit-icon" onclick="editField('birthdate')">✎</span>
           </label>
           <span id="birthdate-display"></span>
-          <input name="birthdate-input" id="birthdate-input" type="date" />
+          <input name="birthdate" id="birthdate-input" value="<%= birthdate %>" type="date" />
         </div>
         <div class="action-buttons">
           <button type="button" class="save-button" onclick="saveChanges()">
@@ -192,6 +200,7 @@
         name: "<%= name %>",
         email: "<%= email %>",
         birthdate: "<%= birthdate ? birthdate : 'Add Birth Date' %>",
+        number : "<%= number %>",
         picture: null,
       };
       console.log(userProfile);
@@ -210,19 +219,21 @@
           userProfile.email;
         document.getElementById("birthdate-display").textContent =
           userProfile.birthdate;
+          document.getElementById("number-display").textContent =
+          userProfile.number;
       }
 
       function editField(field) {
         document.getElementById(`${field}-display`).style.display = "none";
         const input = document.getElementById(`${field}-input`);
         input.style.display = "block";
-        input.value = userProfile[field];
+        // input.value = userProfile[field];
       }
 
       function saveChanges() {
         let hasChanges = false;
 
-        ["name", "email", "birthdate"].forEach((field) => {
+        ["name", "email", "birthdate", "number"].forEach((field) => {
           const input = document.getElementById(`${field}-input`);
           const currentValue = input.value.trim();
           if (currentValue != "") {
@@ -245,7 +256,7 @@
       }
 
       function cancelChanges() {
-        ["name", "email", "birthdate"].forEach((field) => {
+        ["name", "email", "birthdate", "number"].forEach((field) => {
           const input = document.getElementById(`${field}-input`);
           input.style.display = "none";
           document.getElementById(`${field}-display`).style.display = "block";
