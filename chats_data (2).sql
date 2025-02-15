@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.2
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 23, 2025 at 01:36 PM
--- Server version: 10.4.14-MariaDB
--- PHP Version: 7.3.21
+-- Generation Time: Feb 15, 2025 at 12:37 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 7.2.31
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -32,7 +32,7 @@ CREATE TABLE `friends` (
   `user_id` int(11) NOT NULL,
   `friend_id` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `friends`
@@ -41,8 +41,8 @@ CREATE TABLE `friends` (
 INSERT INTO `friends` (`id`, `user_id`, `friend_id`, `created_at`) VALUES
 (1, 1, 1, '2024-12-24 12:28:43'),
 (2, 1, 2, '2024-12-24 12:29:10'),
-(3, 6, 2, '2024-12-24 12:29:10'),
-(4, 2, 6, '2024-12-24 12:29:10'),
+(3, 6, 7, '2024-12-24 12:29:10'),
+(4, 7, 6, '2024-12-24 12:29:10'),
 (6, 1, 3, '2024-12-24 12:29:10');
 
 -- --------------------------------------------------------
@@ -56,7 +56,7 @@ CREATE TABLE `messages` (
   `message` mediumtext DEFAULT NULL,
   `status` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -70,7 +70,7 @@ CREATE TABLE `message_assagin` (
   `to_user_id` int(11) NOT NULL,
   `message_id` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -83,7 +83,7 @@ CREATE TABLE `users` (
   `unique_id` varchar(255) NOT NULL,
   `encripted_id` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
@@ -114,21 +114,21 @@ CREATE TABLE `user_data` (
   `birthdate` datetime DEFAULT NULL,
   `status` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `user_data`
 --
 
 INSERT INTO `user_data` (`id`, `unique_id`, `name`, `password`, `number`, `email`, `address`, `birthdate`, `status`, `created_at`) VALUES
-(1, 101, 'Me', '123456', NULL, 'rishi@gmail.com', NULL, NULL, 1, '2025-01-05 10:57:34'),
-(2, 102, 'Rudhra', '123456', NULL, '123@gmail.com', NULL, NULL, 1, '2025-01-05 11:07:16'),
-(3, 103, 'Rahul', '123456', NULL, 'foronlylapyy@gmail.com', NULL, NULL, 1, '2025-01-05 11:05:11'),
-(4, 104, 'Ravi', '123456', NULL, '', NULL, NULL, 1, '2025-01-05 07:15:06'),
-(5, 105, 'Sagar', '123456', NULL, '', NULL, NULL, 1, '2025-01-05 07:15:06'),
-(6, 519092472416, 'Rishi', '123456', '', 'foronly@gmail.com', '', '0000-00-00 00:00:00', 1, '2025-01-05 11:05:15'),
-(7, 287377317456, 'Rishis', '123456', '', 'rudhrasoni2003@gmail.com', '', '0000-00-00 00:00:00', 1, '2025-01-05 11:04:58'),
-(8, 576240134518, 'Rishi2', '123456', '', 'test@gmail.com', '', '0000-00-00 00:00:00', 1, '2025-01-05 11:05:02');
+(1, 101, 'Me', '123456', '0000000000', 'rishi@gmail.com', NULL, NULL, 1, '2025-01-28 15:57:32'),
+(2, 102, 'Rudhra', '123456', '0000000000', '123@gmail.com', NULL, NULL, 1, '2025-01-28 15:57:45'),
+(3, 103, 'Rahul', '123456', '0000000000', 'foronlylapyy@gmail.com', NULL, NULL, 1, '2025-01-28 15:57:45'),
+(4, 104, 'Ravi', '123456', '0000000000', '', NULL, NULL, 1, '2025-01-28 15:57:45'),
+(5, 105, 'Sagar', '123456', '0000000000', '', NULL, NULL, 1, '2025-01-28 15:57:45'),
+(6, 519092472416, 'Rishi', '123456', '0000000000', 'foronly@gmail.com', '', '0000-00-00 00:00:00', 1, '2025-01-28 15:57:45'),
+(7, 287377317456, 'Rishis', '123456', '0000000000', 'rudhrasoni2003@gmail.com', '', '0000-00-00 00:00:00', 1, '2025-01-28 15:57:45'),
+(8, 576240134518, 'Rishi2', '123456', '0000000000', 'test@gmail.com', '', '0000-00-00 00:00:00', 1, '2025-01-28 15:57:45');
 
 --
 -- Indexes for dumped tables
