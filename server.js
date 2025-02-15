@@ -6,6 +6,7 @@ const app = express();
 
 const { logRequests, checksession, checkAuth } = require("./middlewares");
 const userRoutes = require("./routes/user");
+const fileRoutes = require("./routes/filemanage");
 const chatRoutes = require("./routes/messages");
 const chatbotRoutes = require("./routes/chatbot");
 
@@ -34,9 +35,11 @@ app.get("/register", (req, res) => {
     registered: 3,
   });
 });
+
 app.use("/user", checkAuth, userRoutes);
 
 app.use(checksession()); /// Need Access 
+app.use("/file", fileRoutes);
 app.use("/message", chatRoutes);
 app.use("/v3", chatbotRoutes);
 
@@ -62,7 +65,7 @@ app.get("/", (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 4999;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
