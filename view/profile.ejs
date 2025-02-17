@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Profile Page</title>
     <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-  />
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
     <style>
       * {
         margin: 0;
@@ -125,6 +125,11 @@
         border-radius: 5px;
         display: none;
       }
+      .validation-message.success {
+        color: #2ecc71; /* Green for success */
+        background-color: #ecf9f1;
+        border: 1px solid #02f367;
+      }
 
       .validation-message.error {
         color: #e74c3c; /* Red for errors */
@@ -137,7 +142,8 @@
     <div class="profile-container">
       <div class="profile-header">
         <span
-          ><a href="/" style="color: #fff;"><i class="fa-solid fa-arrow-left"></i></a
+          ><a href="/" style="color: #fff"
+            ><i class="fa-solid fa-arrow-left"></i></a
         ></span>
         <span>Profile</span>
         <span></span>
@@ -148,10 +154,31 @@
         action="/user/profile"
         method="post"
       >
+        <input
+          type="hidden"
+          name="_id"
+          id="name-input"
+          value="<%= _id %>"
+          type="text"
+        />
         <div id="profile-pic" class="profile-pic"></div>
         <div id="profile-validation-message" class="validation-message error">
           <strong>No Changes Found</strong>
         </div>
+        <% var msg = typeof message !== "undefined" && message ? message : null;
+        console.log(message)
+        if(msg !== "" && msg != null){ 
+          let className = "error"; 
+          if(error == 0){ 
+            className = "success";
+        } %>
+        <div
+          id="message-validation-message"
+          class="validation-message <%= className %>"
+        >
+          <strong><% message %></strong>
+        </div>
+        <%}%>
         <div class="profile-details">
           <label>
             Name
@@ -163,10 +190,16 @@
         <div class="profile-details">
           <label>
             Email
-            <span class="edit-icon" on222click="editField('email')">✎</span>
+            <!-- <span class="edit-icon" onclick="editField('email')">✎</span> -->
           </label>
           <span id="email-display">123 Main Street</span>
-          <input name="email" id="email-input" value="<%= email %>" type="text" />
+          <input
+            name="email"
+            id="email-input"
+            value="<%= email %>"
+            type="text"
+            readonly
+          />
         </div>
         <div class="profile-details">
           <label>
@@ -174,7 +207,12 @@
             <span class="edit-icon" onclick="editField('number')">✎</span>
           </label>
           <span id="number-display"></span>
-          <input name="number" id="number-input" value="<%= number %>" type="text" />
+          <input
+            name="number"
+            id="number-input"
+            value="<%= number %>"
+            type="text"
+          />
         </div>
         <div class="profile-details">
           <label>
@@ -182,7 +220,12 @@
             <span class="edit-icon" onclick="editField('birthdate')">✎</span>
           </label>
           <span id="birthdate-display"></span>
-          <input name="birthdate" id="birthdate-input" value="<%= birthdate %>" type="date" />
+          <input
+            name="birthdate"
+            id="birthdate-input"
+            value="<%= birthdate %>"
+            type="date"
+          />
         </div>
         <div class="action-buttons">
           <button type="button" class="save-button" onclick="saveChanges()">
@@ -200,7 +243,7 @@
         name: "<%= name %>",
         email: "<%= email %>",
         birthdate: "<%= birthdate ? birthdate : 'Add Birth Date' %>",
-        number : "<%= number %>",
+        number: "<%= number %>",
         picture: null,
       };
       console.log(userProfile);
@@ -219,7 +262,7 @@
           userProfile.email;
         document.getElementById("birthdate-display").textContent =
           userProfile.birthdate;
-          document.getElementById("number-display").textContent =
+        document.getElementById("number-display").textContent =
           userProfile.number;
       }
 
@@ -246,7 +289,7 @@
           }
         });
         if (hasChanges) {
-            $("#userdataedit").submit();
+          $("#userdataedit").submit();
         } else {
           $("#profile-validation-message").css("display", "block");
           setTimeout(() => {
@@ -265,5 +308,13 @@
 
       initializeProfile();
     </script>
+    <% if(msg){ %>
+    <script>
+      $("#message-validation-message").css("display", "block");
+      setTimeout(() => {
+        $("#message-validation-message").css("display", "none");
+      }, 3000);
+    </script>
+    <% } %>
   </body>
 </html>

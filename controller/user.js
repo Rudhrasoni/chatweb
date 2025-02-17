@@ -1,4 +1,9 @@
-const { getUserData, addUserIn, loginUser, editUserdata } = require("../models/user");
+const {
+  getUserData,
+  addUserIn,
+  loginUser,
+  editUserdata,
+} = require("../models/user");
 const path = require("path");
 const loginViewPath = path.join(__dirname, "../view/login");
 const profilePath = path.join(__dirname, "../view/profile");
@@ -89,14 +94,14 @@ async function profiledata(req, res) {
     return res.status(400).json({ message: "User data is not defined" });
   }
   const profiledata = {
-      _id : userdata.unique_id,
-      name: userdata.name,
-      email: userdata.email,
-      birthdate: userdata.birthdate,
-      number: userdata.number
-  }
+    _id: userdata.unique_id,
+    name: userdata.name,
+    email: userdata.email,
+    birthdate: userdata.birthdate,
+    number: userdata.number,
+  };
 
-  return res.render(profilePath, profiledata);
+  return res.render(profilePath,profiledata );
 }
 async function editUserdara(req, res) {
   const userdata = req.body;
@@ -105,19 +110,39 @@ async function editUserdara(req, res) {
   }
   try {
     const added = await editUserdata(userdata);
-
+    console.log(added);
     if (added.success) {
+      const userdata = added.userdata;
+      // if (!userdata) {
+      //   return res.status(400).json({ message: "User data is not defined" });
+      // }
+      req.user = userdata;
       return res.render(profilePath, {
+        _id: userdata.unique_id,
+        name: userdata.name,
+        email: userdata.email,
+        birthdate: userdata.birthdate,
+        number: userdata.number,
         error: 0,
         message: "Successfully updated",
       });
     } else if (added.errorCode == 2) {
       return res.render(profilePath, {
+        _id: userdata.unique_id,
+        name: userdata.name,
+        email: userdata.email,
+        birthdate: userdata.birthdate,
+        number: userdata.number,
         error: 1,
         message: added.message,
       });
     } else if (added.errorCode == 3) {
       return res.render(profilePath, {
+        _id: userdata.unique_id,
+        name: userdata.name,
+        email: userdata.email,
+        birthdate: userdata.birthdate,
+        number: userdata.number,
         error: 2,
         message: "Something went wrong, Please try agin later",
       });
@@ -132,5 +157,5 @@ module.exports = {
   registerUser,
   checkUser,
   profiledata,
-  editUserdara
+  editUserdara,
 };

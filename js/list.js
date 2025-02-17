@@ -11,7 +11,7 @@ async function getFriends(userid) {
       contentType: "application/json",
     });
 
-    //   console.log("Response received:", response);
+      console.log("Response received:", response);
     return response;
   } catch (err) {
     console.error("Error occurred:", err);

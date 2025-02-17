@@ -70,7 +70,6 @@ async function addUserIn(params) {
   } finally {
   }
 }
-
 async function editUserdata(params) {
   const userdata = params;
   const connection = await getConnection();
@@ -78,21 +77,9 @@ async function editUserdata(params) {
   try {
     const checkEmailSQL = `SELECT COUNT(*) as count FROM user_data WHERE email = ? AND id != ?`;
     const [emailExists] = await new Promise((resolve, reject) => {
-      connection.query(checkEmailSQL, [userdata.email, userdata.id], (err, result) => {
-        if (err) return reject(err);
-        resolve(result);
-      });
-    });
-
-    if (emailExists.count > 0) {
-      return { success: false, errorCode: 2, message: "Email already exists!" };
-    }
-
-    const userDataUpdateSQL = `UPDATE user_data SET name = ?, number = ?, email = ?, birthdate = ? WHERE id = ?`;
-    await new Promise((resolve, reject) => {
       connection.query(
-        userDataUpdateSQL,
-        [userdata.name, userdata.number, userdata.email, userdata.birthdate, userdata.id],
+        checkEmailSQL,
+        [userdata.email, userdata.id],
         (err, result) => {
           if (err) return reject(err);
           resolve(result);
@@ -100,11 +87,39 @@ async function editUserdata(params) {
       );
     });
 
-    return { success: true, errorCode: 0, message: "User updated successfully!" };
+    // if (emailExists.count > 0) {
+    //   return { success: false, errorCode: 1, message: "Email already in use." };
+    // }
+
+    const userDataUpdateSQL = `UPDATE user_data SET name = ?, number = ?, birthdate = ? WHERE unique_id = ?`;
+    await new Promise((resolve, reject) => {
+      connection.query(
+        userDataUpdateSQL,
+        [userdata.name, userdata.number, userdata.birthdate, userdata._id],
+        (err, result) => {
+          if (err) return reject(err);
+          resolve(result);
+        }
+      );
+    });
+
+    const getUserDataSQL = `SELECT unique_id, name, email, number, birthdate FROM user_data WHERE unique_id = ?`;
+    const [updatedUser] = await new Promise((resolve, reject) => {
+      connection.query(getUserDataSQL, [userdata._id], (err, result) => {
+        if (err) return reject(err);
+        resolve(result);
+      });
+    });
+
+    return {
+      success: true,
+      errorCode: 0,
+      message: "User updated successfully!",
+      userdata: updatedUser,
+    };
   } catch (err) {
     console.error("Error updating user:", err);
     return { success: false, errorCode: 1, message: "Error " + err };
-  } finally {
   }
 }
 

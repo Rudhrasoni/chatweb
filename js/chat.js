@@ -169,4 +169,126 @@ if (!user) {
   });
   
   read();
+  $(document).ready(function () {
+    $("#attach-button").click(function () {
+      $("#attachment-menu").toggle();
+    });
+  
+    $(".attachment-option").click(function () {
+      let type = $(this).data("type");
+  
+      if (type === "photo" || type === "document") {
+        let fileInput = $("#file-input");
+        fileInput.data("type", type);
+        fileInput.click();
+      } else if (type === "contact") {
+        previewAttachment("contact", "Contact selection coming soon!");
+      }
+    });
+  
+    // Handle file selection
+    $("#file-input").change(function (event) {
+      let file = event.target.files[0];
+      let fileType = $(this).data("type");
+  
+      if (!file) return;
+  
+      let reader = new FileReader();
+      reader.onload = function (e) {
+        if (fileType === "photo") {
+          previewAttachment("image", e.target.result, file);
+        } else if (fileType === "document") {
+          previewAttachment("document", file.name, file);
+        }
+      };
+  
+      if (fileType === "photo") {
+        reader.readAsDataURL(file);
+      } else if (fileType === "document") {
+        previewAttachment("document", file.name, file);
+      }
+    });
+  
+    // Function to preview attachment
+    function previewAttachment(type, content, file = null) {
+      let previewContainer = $("#attachment-preview");
+      previewContainer.empty(); // Clear previous previews
+  
+      let previewHTML = "";
+      if (type === "image") {
+        previewHTML = `<div class="preview-item">
+                        <img src="${content}" alt="Preview Image" class="preview-img">
+                        <div>
+                        <span class="remove-preview">&times;</span>
+                        <button id="send-attachment" class="send-button"><i class="fa-solid fa-paper-plane"></i></button>
+                        </div>
+                      </div>`;
+      } else if (type === "document") {
+        previewHTML = `<div class="preview-item">
+                        <span style="align-self: flex-start">
+                        <i class="fa-solid fa-file"></i> ${content}
+                        </span>
+                        <div>
+                        <span class="remove-preview">&times;</span>
+                        <button id="send-attachment" class="send-button"><i class="fa-solid fa-paper-plane"></i></button>
+                        </div>
+                      </div>`;
+      } else if (type === "contact") {
+        previewHTML = `<div class="preview-item">
+                        <i class="fa-solid fa-user"></i> ${content}
+                        <span class="remove-preview">&times;</span>
+                        </div>`;
+      }
+  
+  
+      previewContainer.html(previewHTML).show();
+  
+      // Remove preview when clicking close
+      $(".remove-preview").click(function () {
+        previewContainer.hide().empty();
+      });
+  
+      // Send attachment when clicking send button
+      $("#send-attachment").click(function () {
+        sendAttachment(type, file);
+      });
+    }
+  
+    // Function to send attachment to API
+    function sendAttachment(type, file) {
+      if (!file) {
+        alert("No file selected!");
+        return;
+      }
+  
+      let formData = new FormData();
+      formData.append("attachmentType", type);
+      formData.append("file", file);
+      if(type == "contact"){
+        return;
+      }
+  
+      $.ajax({
+        url: "${apiUrl}/file/upload", // Replace with your API URL
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+          alert("Attachment sent successfully!");
+          $("#attachment-preview").hide().empty();
+        },
+        error: function (xhr, status, error) {
+          alert("Error sending attachment: " + error);
+        },
+      });
+    }
+  
+    // Close menu when clicking outside
+    $(document).click(function (event) {
+      if (!$(event.target).closest("#attachment-menu, #attach-button").length) {
+        $("#attachment-menu").hide();
+      }
+    });
+  });
   
