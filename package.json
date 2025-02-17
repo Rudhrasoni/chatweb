@@ -11,5 +11,19 @@
     "mysql2": "^3.11.5",
     "socket.io": "^4.8.1",
     "uuid": "^11.0.3"
-  }
+  },
+  "name": "chatweb",
+  "description": "",
+  "version": "1.0.0",
+  "main": "chatbot.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rudhrasoni/chatweb.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Rudhrasoni/chatweb/issues"
+  },
+  "homepage": "https://github.com/Rudhrasoni/chatweb#readme"
 }

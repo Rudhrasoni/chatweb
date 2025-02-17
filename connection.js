@@ -4,10 +4,10 @@ const mysql = require('mysql2');
 
 // MySQL connection configuration
 const connectionConfig = {
-    host: 'localhost',
+    host: '127.0.0.1',
     user: 'root',
-    password: '', // Replace with your MySQL password
-    database: 'chats_data' // Replace with your database name
+    password: '12345', 
+    database: 'chats_data' 
 };
 
 /**
