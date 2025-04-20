@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
 app.use("/js", express.static(path.join(__dirname, "js")));
-
+app.use('/api', require('./routes/chatbot.route'));
 app.use(logRequests("./logs/logs.txt"));
 app.get("/login",checkAuth, (req, res) => {
   const user = req.user;
